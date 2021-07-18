@@ -8,7 +8,10 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Chip from '@material-ui/core/Chip';
 import { green, yellow, red } from '@material-ui/core/colors';
 
-const Logitem = ({ log: { _id, priority, user, text, created } }) => {
+const Logitem = ({
+  deleteItem,
+  log: { _id, priority, user, text, created },
+}) => {
   // set color of priority chips
   const colorForStatus = priority => {
     switch (priority) {
@@ -40,7 +43,11 @@ const Logitem = ({ log: { _id, priority, user, text, created } }) => {
         <Moment format='MMM Do YYYY, h:mm:ss a'>{new Date(created)}</Moment>
       </TableCell>
       <TableCell>
-        <IconButton aria-label='delete' color='secondary'>
+        <IconButton
+          aria-label='delete'
+          color='secondary'
+          onClick={() => deleteItem(_id)}
+        >
           <DeleteIcon />
         </IconButton>
       </TableCell>

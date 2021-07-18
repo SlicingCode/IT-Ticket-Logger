@@ -35,7 +35,7 @@ const AddLogItem = props => {
             <Grid item xs={12}>
               <TextField
                 value={text}
-                placeholder='Log'
+                placeholder='Issue'
                 fullWidth
                 variant='outlined'
                 onChange={e => setText(e.target.value)}

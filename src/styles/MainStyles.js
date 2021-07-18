@@ -3,6 +3,10 @@ const styles = theme => ({
   table: {
     minWidth: 650,
   },
+  // Table Container
+  tableContainer: {
+    marginBottom: 50,
+  },
   // Card
   card: {
     marginTop: 10,
@@ -16,6 +20,11 @@ const styles = theme => ({
   // Font
   font: {
     fontWeight: 'bold',
+  },
+  // Alert
+  alert: {
+    marginBottom: 10,
+    marginTop: -15,
   },
 });
 

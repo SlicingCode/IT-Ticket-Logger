@@ -7,6 +7,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Card from '@material-ui/core/Card';
+import Alert from '@material-ui/lab/Alert';
 import Logitem from './Logitem';
 import AddLogItem from './AddLogItem';
 
@@ -39,22 +40,60 @@ function App(props) {
     },
   ]);
 
+  const [alert, setAlert] = useState({
+    show: false,
+    message: '',
+    severity: 'success',
+  });
+
   const addItem = item => {
+    if (item.text === '' || item.user === '' || item.priority === '') {
+      showAlert('All fields must be completed', 'error');
+      return false;
+    }
+
     item._id = Math.floor(Math.random() * 90000) + 10000;
     item.created = new Date().toString();
     // take everything from existings logs and add new items
     setLogs([...logs, item]);
+    showAlert('Issue Added');
+  };
+
+  const deleteItem = _id => {
+    setLogs(logs.filter(item => item._id !== _id));
+    showAlert('Issue Deleted', 'info');
+  };
+
+  const showAlert = (message, severity = 'success', seconds = 3000) => {
+    setAlert({
+      show: true,
+      message,
+      severity,
+    });
+
+    setTimeout(() => {
+      setAlert({
+        show: false,
+        message: '',
+        severity: 'success',
+      });
+    }, seconds);
   };
 
   return (
     <Container>
       <AddLogItem addItem={addItem} />
-      <TableContainer component={Card}>
+      {alert.show && (
+        <Alert severity={alert.severity} className={classes.alert}>
+          {alert.message}
+        </Alert>
+      )}
+      <TableContainer component={Card} className={classes.tableContainer}>
         <Table className={classes.table} aria-label='simple table'>
           <TableHead>
             <TableRow>
               <TableCell className={classes.font}>Priority</TableCell>
-              <TableCell className={classes.font}>Log Text</TableCell>
+              <TableCell className={classes.font}>Issue</TableCell>
               <TableCell className={classes.font}>User</TableCell>
               <TableCell className={classes.font}>Created</TableCell>
               <TableCell className={classes.font}></TableCell>
@@ -62,7 +101,7 @@ function App(props) {
           </TableHead>
           <TableBody>
             {logs.map(log => (
-              <Logitem key={log._id} log={log} />
+              <Logitem key={log._id} log={log} deleteItem={deleteItem} />
             ))}
           </TableBody>
         </Table>
