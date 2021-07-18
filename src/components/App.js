@@ -6,14 +6,13 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import Card from '@material-ui/core/Card';
 import Logitem from './Logitem';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 import styles from '../styles/MainStyles';
 
 function App(props) {
-  console.log(props);
   const { classes } = props;
   const [logs, setLogs] = useState([
     {
@@ -40,7 +39,7 @@ function App(props) {
   ]);
   return (
     <Container>
-      <TableContainer component={Paper}>
+      <TableContainer component={Card}>
         <Table className={classes.table} aria-label='simple table'>
           <TableHead>
             <TableRow>
