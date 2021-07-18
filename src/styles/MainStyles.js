@@ -5,7 +5,17 @@ const styles = theme => ({
   },
   // Card
   card: {
-    marginTop: 5,
+    marginTop: 10,
+    marginBottom: 25,
+    flexGrow: 1,
+  },
+  // Form Control
+  formControl: {
+    width: '100%',
+  },
+  // Font
+  font: {
+    fontWeight: 'bold',
   },
 });
 

@@ -8,8 +8,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Card from '@material-ui/core/Card';
 import Logitem from './Logitem';
-import withStyles from '@material-ui/core/styles/withStyles';
+import AddLogItem from './AddLogItem';
 
+import withStyles from '@material-ui/core/styles/withStyles';
 import styles from '../styles/MainStyles';
 
 function App(props) {
@@ -37,17 +38,26 @@ function App(props) {
       created: new Date().toString(),
     },
   ]);
+
+  const addItem = item => {
+    item._id = Math.floor(Math.random() * 90000) + 10000;
+    item.created = new Date().toString();
+    // take everything from existings logs and add new items
+    setLogs([...logs, item]);
+  };
+
   return (
     <Container>
+      <AddLogItem addItem={addItem} />
       <TableContainer component={Card}>
         <Table className={classes.table} aria-label='simple table'>
           <TableHead>
             <TableRow>
-              <TableCell>Priority</TableCell>
-              <TableCell>Log Text</TableCell>
-              <TableCell>User</TableCell>
-              <TableCell>Created</TableCell>
-              <TableCell></TableCell>
+              <TableCell className={classes.font}>Priority</TableCell>
+              <TableCell className={classes.font}>Log Text</TableCell>
+              <TableCell className={classes.font}>User</TableCell>
+              <TableCell className={classes.font}>Created</TableCell>
+              <TableCell className={classes.font}></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
