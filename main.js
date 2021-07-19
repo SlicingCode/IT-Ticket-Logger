@@ -179,7 +179,7 @@ async function sendLogs() {
 async function clearLogs() {
   try {
     await Log.deleteMany({});
-    mainWindow.webContents.send('Logs: clear');
+    mainWindow.webContents.send('logs: clear');
   } catch (error) {
     console.error(error);
   }
