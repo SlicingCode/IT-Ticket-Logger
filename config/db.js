@@ -5,7 +5,7 @@ const { truncateSync } = require('original-fs');
 const connectDB = async () => {
   try {
     const conn = mongoose.connect(
-      'mongodb+srv://test:test1234@issuelogger.dcxqq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+      'mongodb+srv://test:test1234@issuelogger.dcxqq.mongodb.net/issuelogger?retryWrites=true&w=majority',
       {
         useNewUrlParser: true,
         useCreateIndex: true,

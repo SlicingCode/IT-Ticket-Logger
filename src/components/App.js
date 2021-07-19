@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Container from '@material-ui/core/Container';
 import Table from '@material-ui/core/Table';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -10,35 +10,14 @@ import Card from '@material-ui/core/Card';
 import Alert from '@material-ui/lab/Alert';
 import Logitem from './Logitem';
 import AddLogItem from './AddLogItem';
+import { ipcRenderer } from 'electron';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 import styles from '../styles/MainStyles';
 
 function App(props) {
   const { classes } = props;
-  const [logs, setLogs] = useState([
-    {
-      _id: 1,
-      text: 'This is log one',
-      priority: 'low',
-      user: 'Brad',
-      created: new Date().toString(),
-    },
-    {
-      _id: 2,
-      text: 'This is log two',
-      priority: 'moderate',
-      user: 'Kate',
-      created: new Date().toString(),
-    },
-    {
-      _id: 3,
-      text: 'This is log three',
-      priority: 'high',
-      user: 'John',
-      created: new Date().toString(),
-    },
-  ]);
+  const [logs, setLogs] = useState([]);
 
   const [alert, setAlert] = useState({
     show: false,
@@ -46,21 +25,27 @@ function App(props) {
     severity: 'success',
   });
 
+  useEffect(() => {
+    ipcRenderer.send('logs:load');
+
+    ipcRenderer.on('logs:get', (e, logs) => {
+      setLogs(JSON.parse(logs));
+    });
+  }, []);
+
   const addItem = item => {
     if (item.text === '' || item.user === '' || item.priority === '') {
       showAlert('All fields must be completed', 'error');
       return false;
     }
 
-    item._id = Math.floor(Math.random() * 90000) + 10000;
-    item.created = new Date().toString();
-    // take everything from existings logs and add new items
-    setLogs([...logs, item]);
+    ipcRenderer.send('logs:add', item);
+
     showAlert('Issue Added');
   };
 
   const deleteItem = _id => {
-    setLogs(logs.filter(item => item._id !== _id));
+    ipcRenderer.send('logs:delete', _id);
     showAlert('Issue Deleted', 'info');
   };
 

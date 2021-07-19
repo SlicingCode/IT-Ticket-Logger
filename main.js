@@ -1,7 +1,7 @@
 'use strict';
 
 // Import parts of electron to use
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const path = require('path');
 const url = require('url');
 const Log = require('./models/Log');
@@ -16,6 +16,9 @@ let mainWindow;
 
 // Keep a reference for dev mode
 let dev = false;
+
+// Detect mac (menu)
+const isMac = process.platform === 'darwin' ? true : false;
 
 // Broken:
 // if (process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) || /[\\/]electron[\\/]/.test(process.execPath)) {
@@ -39,14 +42,16 @@ if (process.platform === 'win32') {
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1100,
-    height: 800,
+    width: 1024,
+    height: 768,
     show: false,
+    resizable: false,
     backgroundColor: 'white',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
     },
+    autoHideMenuBar: true,
   });
 
   // and load the index.html of the app.
@@ -100,6 +105,73 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
+
+const menu = [
+  ...(isMac ? [{ role: 'appMenu' }] : []),
+  {
+    role: 'fileMenu',
+  },
+  {
+    role: 'editMenu',
+  },
+  {
+    label: 'Logs',
+    submenu: [
+      {
+        label: 'Clear Logs',
+        click: () => clearLogs(),
+      },
+    ],
+  },
+  ...(Dev
+    ? [
+        {
+          label: 'Developer',
+          submenu: [
+            { role: 'reload' },
+            { role: 'forcereload' },
+            { type: 'separator' },
+            { role: 'toggledevtools' },
+          ],
+        },
+      ]
+    : []),
+];
+
+// Load Logs
+ipcMain.on('logs:load', sendLogs);
+
+// Create log
+ipcMain.on('logs:add', async (e, item) => {
+  try {
+    await Log.create(item);
+    sendLogs();
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+// Delete Log
+ipcMain.on('logs:delete', async (e, id) => {
+  try {
+    await Log.findOneAndDelete({ _id: id });
+    sendLogs();
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+// Send log items
+async function sendLogs() {
+  try {
+    const logs = await Log.find().sort({ created: 1 });
+    mainWindow.webContents.send('logs:get', JSON.stringify(logs));
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Clear all logs
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
