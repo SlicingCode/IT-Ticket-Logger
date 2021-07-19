@@ -52,3 +52,7 @@ ehthumbs.db
 # Windows shortcuts #
 #####################
 *.lnk
+
+# Windows Installer #
+#####################
+windows_installer/
